@@ -84,7 +84,7 @@ public interface Retry
                             }
                         }
                     }
-                }, initialDelay, TimeUnit.MILLISECONDS
+                }, initialDelay > 0 ? initialDelay : 0, TimeUnit.MILLISECONDS
             )
         );
 
