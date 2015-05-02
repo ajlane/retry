@@ -22,7 +22,7 @@ public interface Retry
 
     public static Retry none()
     {
-        return (attempts, cause) -> -1;
+        return (attempts, cause) -> attempts == 0 ? 0 : -1;
     }
 
     public static Retry withExponentialBackoff(final long period, final TimeUnit units)
