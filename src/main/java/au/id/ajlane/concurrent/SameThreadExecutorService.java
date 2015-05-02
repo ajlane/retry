@@ -373,7 +373,6 @@ public class SameThreadExecutorService
     @Override
     public <T> Future<T> submit(final Callable<T> task)
     {
-
         try
         {
             return new ImmediateSuccessFuture<>(task.call());
@@ -387,7 +386,6 @@ public class SameThreadExecutorService
     @Override
     public <T> Future<T> submit(final Runnable task, final T result)
     {
-
         try
         {
             task.run();
@@ -477,7 +475,7 @@ public class SameThreadExecutorService
                 return result.get();
             } catch (final ExecutionException ex)
             {
-                failures.add(ex.getCause());
+                failures.push(ex.getCause());
             }
         }
         final Throwable cause = failures.pop();
@@ -516,7 +514,7 @@ public class SameThreadExecutorService
                 return result.get();
             } catch (final ExecutionException ex)
             {
-                failures.add(ex.getCause());
+                failures.push(ex.getCause());
             }
         }
         final Throwable cause = failures.pop();
@@ -525,7 +523,6 @@ public class SameThreadExecutorService
             cause.addSuppressed(failures.pop());
         }
         throw new ExecutionException(cause);
-
     }
 
 }

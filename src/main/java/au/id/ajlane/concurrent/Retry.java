@@ -4,61 +4,35 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 public interface Retry
 {
-    public static Retry none() { return e -> -1; }
-
-    public static Retry continuously() { return e -> 0; }
-
-    default Retry limit(int n){
-        final Retry self = this;
-        return new Retry() {
-
-            private volatile int attempts = 0;
-
-            @Override
-            public long getDelay(final Exception cause)
-            {
-                return attempts <= n ? self.getDelay(cause) : -1;
-            }
-        };
+    public static Retry continuously()
+    {
+        return (attempts, cause) -> 0;
     }
 
-    public static Retry every(final long period, final TimeUnit units) { return e -> units.toMillis(period); }
-
-    public static Retry withLinearBackoff(final long period, final TimeUnit units)
+    public static Retry every(final long period, final TimeUnit units)
     {
-        return new Retry()
-        {
-            private volatile int attempts = 0;
+        return (attempts, cause) -> units.toMillis(period);
+    }
 
-            @Override
-            public long getDelay(final Exception cause)
-            {
-                return units.toMillis(attempts * period);
-            }
-        };
+    public static Retry none()
+    {
+        return (attempts, cause) -> -1;
     }
 
     public static Retry withExponentialBackoff(final long period, final TimeUnit units)
     {
-        return new Retry()
-        {
-            private volatile int attempts = 0;
-
-            @Override
-            public long getDelay(final Exception cause)
-            {
-                if (attempts > 62)
-                { return -1; }
-                return units.toMillis((1 << attempts) * period);
-            }
-        };
+        return (attempts, cause) -> attempts > 62 ? -1 : units.toMillis((1 << attempts) * period);
     }
 
-    long getDelay(final Exception cause);
+    public static Retry withLinearBackoff(final long period, final TimeUnit units)
+    {
+        return (attempts, cause) -> units.toMillis(attempts * period);
+    }
 
     default <V> RetryFuture<V> execute(final Callable<V> task)
     {
@@ -74,8 +48,10 @@ public interface Retry
                          .cancel(true)
         );
         final AtomicReference<Exception> suppressed = new AtomicReference<>();
+        final AtomicInteger attempts = new AtomicInteger(0);
+        final long initialDelay = getDelay(0, null);
         attempt.set(
-            executorService.submit(
+            executorService.schedule(
                 new Runnable()
                 {
                     @Override
@@ -94,7 +70,7 @@ public interface Retry
                                     ex.addSuppressed(previouslySuppressed);
                                 }
 
-                                final long delay = Retry.this.getDelay(ex);
+                                final long delay = Retry.this.getDelay(attempts.incrementAndGet(), ex);
                                 if (delay >= 0)
                                 {
                                     suppressed.set(ex);
@@ -107,11 +83,17 @@ public interface Retry
                             }
                         }
                     }
-                }
+                }, initialDelay, TimeUnit.MILLISECONDS
             )
         );
 
         return result;
     }
 
+    long getDelay(final int attempts, final Exception cause);
+
+    default Retry limit(int n)
+    {
+        return (attempts, cause) -> attempts <= n ? this.getDelay(attempts, cause) : -1;
+    }
 }
