@@ -6,6 +6,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Predicate;
 
 public interface Retry
 {
@@ -95,5 +96,15 @@ public interface Retry
     default Retry limit(int n)
     {
         return (attempts, cause) -> attempts <= n ? this.getDelay(attempts, cause) : -1;
+    }
+
+    default Retry when(final Predicate<? super Exception> predicate)
+    {
+        return (attempts, cause) -> predicate.test(cause) ? this.getDelay(attempts, cause) : -1;
+    }
+
+    default Retry when(final Class<? extends Exception> type)
+    {
+        return when(type::isInstance);
     }
 }
