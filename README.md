@@ -1,5 +1,5 @@
 # Retry
-An utility for automatically retrying failed tasks according to a retry strategy. Built-in strategies include linear and exponential back-off.
+A utility for automatically retrying failed tasks according to a retry strategy. Built-in strategies include linear and exponential back-off.
 
 If a task fails by throwing an exception, the exception will be suppressed while the task is re-executed. If no more retries are permitted _all_ of the suppressed exceptions will be available via the task's `Future`.
 
