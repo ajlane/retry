@@ -4,8 +4,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>au.id.ajlane.getDelay</groupId>
-    <artifactId>getDelay</artifactId>
+    <groupId>au.id.ajlane.retry</groupId>
+    <artifactId>retry</artifactId>
     <version>0.0.1-SNAPSHOT</version>
 
     <licenses>
@@ -17,9 +17,9 @@
     </licenses>
 
     <scm>
-        <url>https://github.com/ajlane/getDelay</url>
-        <connection>scm:git:git://github.com/ajlane/getDelay.git</connection>
-        <developerConnection>scm:git:git@github.com:ajlane/getDelay.git</developerConnection>
+        <url>https://github.com/ajlane/retry</url>
+        <connection>scm:git:git://github.com/ajlane/retry.git</connection>
+        <developerConnection>scm:git:git@github.com:ajlane/retry.git</developerConnection>
     </scm>
 
     <properties>
