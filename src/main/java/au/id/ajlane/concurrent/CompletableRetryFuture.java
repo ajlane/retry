@@ -4,27 +4,42 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Delayed;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * A completable version of a {@link RetryFuture}.
+ *
+ * @param <V>
+ *     The type of the value returned by the task.
+ */
 class CompletableRetryFuture<V>
     extends CompletableFuture<V>
     implements RetryFuture<V>
 {
-    private volatile long delay;
     private final Runnable interrupt;
     private final Retry strategy;
+    private volatile long delay;
 
-    @Override
-    public boolean cancel(boolean mayInterruptIfRunning)
-    {
-        if(mayInterruptIfRunning){
-            interrupt.run();
-        }
-        return super.cancel(mayInterruptIfRunning);
-    }
-
+    /**
+     * Initialises the future.
+     *
+     * @param strategy
+     *     The retry strategy. Must not be null.
+     * @param interrupt
+     *     A function which will interrupt the task if it is still running. Must not be null.
+     */
     public CompletableRetryFuture(final Retry strategy, final Runnable interrupt)
     {
         this.strategy = strategy;
         this.interrupt = interrupt;
+    }
+
+    @Override
+    public boolean cancel(boolean mayInterruptIfRunning)
+    {
+        if (mayInterruptIfRunning)
+        {
+            interrupt.run();
+        }
+        return super.cancel(mayInterruptIfRunning);
     }
 
     @Override
@@ -47,6 +62,14 @@ class CompletableRetryFuture<V>
         return strategy;
     }
 
+    /**
+     * Sets the delay that will be reported by this future.
+     *
+     * @param delay
+     *     The delay to report. Must be non-negative.
+     * @param unit
+     *     The units of the delay. Must not be null.
+     */
     public void setDelay(final long delay, final TimeUnit unit)
     {
         this.delay = unit.toMillis(delay);
