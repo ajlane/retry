@@ -1,4 +1,7 @@
 # Retry
+[![javadoc](http://www.javadoc.io/badge/au.id.ajlane.retry/retry.svg)](http://www.javadoc.io/doc/au.id.ajlane.retry/retry)
+[![build-status](https://travis-ci.org/ajlane/retry.svg?branch=master)](https://travis-ci.org/ajlane/retry) [![codecov](https://codecov.io/gh/ajlane/retry/branch/master/graph/badge.svg)](https://codecov.io/gh/ajlane/retry)
+
 A utility for automatically retrying failed tasks according to a retry strategy. Built-in strategies include linear and exponential back-off.
 
 If a task fails by throwing an exception, the exception will be suppressed while the task is re-executed. If no more retries are permitted _all_ of the suppressed exceptions will be available via the task's `Future`.
