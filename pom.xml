@@ -10,7 +10,7 @@
 
     <groupId>au.id.ajlane.retry</groupId>
     <artifactId>retry</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
 
     <licenses>
         <license>
@@ -24,6 +24,7 @@
         <url>https://github.com/ajlane/retry</url>
         <connection>scm:git:git://github.com/ajlane/retry.git</connection>
         <developerConnection>scm:git:git@github.com:ajlane/retry.git</developerConnection>
+    <tag>retry-0.0.1</tag>
   </scm>
 
     <dependencies>
