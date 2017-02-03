@@ -23,3 +23,15 @@ Future<List<Status>> result =
                    .getTweets()
          );
 ```
+
+
+## Maven
+
+Retry is available in Maven Central.
+```xml
+<dependency>
+  <groupId>au.id.ajlane.retry</groupId>
+  <artifactId>retry</artifactId>
+  <version>0.0.1</version>
+</dependency>
+```
